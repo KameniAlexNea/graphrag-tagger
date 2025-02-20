@@ -1,4 +1,6 @@
-aisuite[all]
+aisuite[ollama]
 scikit-learn
 bertopic
 ktrain
+docstring_parser
+ollama # using local built-in library by default
