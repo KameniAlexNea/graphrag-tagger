@@ -41,7 +41,7 @@ class SklearnTopicExtractor:
             n_components=self.n_components, random_state=0
         )
 
-    def fit(self, texts: List[str]):
+    def fit(self, texts: List[str] = None):
         """
         Fit the topic model on a list of document texts.
 
@@ -52,6 +52,8 @@ class SklearnTopicExtractor:
         Returns:
             self (for chaining)
         """
+        if texts is None:
+            texts = self.texts
         X = self.vectorizer.fit_transform(texts)
         self.lda.fit(X)
         return self
@@ -123,8 +125,3 @@ if __name__ == "__main__":
     print("Topics from LDA:")
     for topic in messy_topics:
         print("-", topic)
-
-    # Optionally, transform new texts into the topic space.
-    topic_distributions = extractor.transform(texts[-10:])
-    print("\nTopic distributions for sample texts:")
-    print(topic_distributions)
