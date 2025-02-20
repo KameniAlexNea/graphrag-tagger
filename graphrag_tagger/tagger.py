@@ -1,20 +1,27 @@
 # topic_lib.py
 
-import os
 import json
+import os
 from typing import List
-import ktrain
+
 from ktrain.text import get_topic_model
-from langchain.schema import Document
 from langchain.chat_models import ChatOllama  # or ChatOpenAI if preferred
-from langchain.prompts import ChatPromptTemplate
 from langchain.document_loaders import PyPDFLoader
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema import Document
+
 
 # -------------------------------------------
 # Part 1: LDA-Based Topic Extraction using ktrain
 # -------------------------------------------
 class TopicExtractor:
-    def __init__(self, n_features: int = 512, min_df: int = 2, max_df: float = 0.95, threshold: float = 0.25):
+    def __init__(
+        self,
+        n_features: int = 512,
+        min_df: int = 2,
+        max_df: float = 0.95,
+        threshold: float = 0.25,
+    ):
         """
         Initialize the TopicExtractor with ktrain parameters.
         """
@@ -28,7 +35,9 @@ class TopicExtractor:
         """
         Build the topic model using the provided texts.
         """
-        self.tm = get_topic_model(texts, n_features=self.n_features, min_df=self.min_df, max_df=self.max_df)
+        self.tm = get_topic_model(
+            texts, n_features=self.n_features, min_df=self.min_df, max_df=self.max_df
+        )
         self.tm.build(texts, threshold=self.threshold)
         return self
 
@@ -123,8 +132,7 @@ Return your answer as a JSON array of strings (using only the provided candidate
         """
         topics_str = ", ".join(candidate_topics)
         formatted_prompt = self.prompt_template.format(
-            text=chunk_text,
-            topics=topics_str
+            text=chunk_text, topics=topics_str
         )
         response = self.llm.invoke(formatted_prompt)
         try:

@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -53,7 +54,9 @@ class SklearnTopicExtractor:
 
         if self.n_components is None:
             self.n_components = min(int(len(texts) ** 0.5), 25)
-            print(f"n_components is None, setting it to sqrt(len(texts)): {self.n_components}")
+            print(
+                f"n_components is None, setting it to sqrt(len(texts)): {self.n_components}"
+            )
 
         self.vectorizer = CountVectorizer(
             max_features=self.max_features, min_df=self.min_df, max_df=self.max_df
@@ -68,7 +71,9 @@ class SklearnTopicExtractor:
         self.lda.fit(X)
         return self
 
-    def get_topics(self, threshold_fraction: float = 0.8, n_word_limit: int = 15) -> List[str]:
+    def get_topics(
+        self, threshold_fraction: float = 0.8, n_word_limit: int = 15
+    ) -> List[str]:
         """
         Retrieve topics as a list of strings.
 
@@ -84,7 +89,9 @@ class SklearnTopicExtractor:
             List[str]: A list of topic strings.
         """
         if self.vectorizer is None or self.lda is None:
-            raise ValueError("The model must be fitted first. Call 'fit' method before 'get_topics'.")
+            raise ValueError(
+                "The model must be fitted first. Call 'fit' method before 'get_topics'."
+            )
 
         feature_names = self.vectorizer.get_feature_names_out()
         topics = []
@@ -93,14 +100,19 @@ class SklearnTopicExtractor:
             total_weight = topic_weights.sum()
             cumulative_weight = 0.0
             selected_word_indices: List[int] = []
-            sorted_indices = topic_weights.argsort()[::-1]  # Descending order of weights
+            sorted_indices = topic_weights.argsort()[
+                ::-1
+            ]  # Descending order of weights
             word_count = 0
 
             for word_index in sorted_indices:
                 word_count += 1
                 selected_word_indices.append(word_index)
                 cumulative_weight += topic_weights[word_index]
-                if cumulative_weight >= threshold_fraction * total_weight or word_count >= n_word_limit:
+                if (
+                    cumulative_weight >= threshold_fraction * total_weight
+                    or word_count >= n_word_limit
+                ):
                     break
 
             top_words = [feature_names[i] for i in selected_word_indices]
@@ -119,7 +131,9 @@ class SklearnTopicExtractor:
             Array of shape (n_samples, n_components) with topic probabilities for each document.
         """
         if self.vectorizer is None or self.lda is None:
-            raise ValueError("The model must be fitted first. Call 'fit' method before 'transform'.")
+            raise ValueError(
+                "The model must be fitted first. Call 'fit' method before 'transform'."
+            )
         if not texts:
             raise ValueError("Input 'texts' list cannot be empty.")
 

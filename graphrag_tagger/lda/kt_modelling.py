@@ -1,6 +1,6 @@
-import ktrain
+from typing import List
+
 from ktrain.text import get_topic_model
-from typing import List, Optional
 
 
 class TopicExtractor:
