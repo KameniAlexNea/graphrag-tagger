@@ -1,0 +1,6 @@
+PACKAGE_NAME = "graphrag_tagger"
+VERSION = "0.1.0"
+DESCRIPTION = "A tagging tool that leverages AISuite, scikit-learn, BERTopic, ktrain, and ollama."
+AUTHOR = "Alex Kameni"
+AUTHOR_EMAIL = "kamenialexnea@gmail.com"
+URL = "..."

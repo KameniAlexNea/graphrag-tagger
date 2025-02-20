@@ -2,6 +2,13 @@
 
 graphrag-tagger is a lightweight toolkit designed for topic extraction and tagging in GraphRAG applications. The project leverages classic LDA techniques along with modern LLM capabilities to generate, refine, and classify topic labels.
 
+## Installation
+
+Install the package via pip:
+```bash
+pip install .
+```
+
 ## Components
 
 ### Topic Modeling
