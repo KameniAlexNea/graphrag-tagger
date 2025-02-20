@@ -1,7 +1,6 @@
 from typing import List
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
-import logging
 
 
 class SklearnTopicExtractor:
@@ -25,10 +24,9 @@ class SklearnTopicExtractor:
             n_top_words: Number of top words to display per topic.
         """
         if n_components is None:
-            logging.info("n_components is None, setting it to sqrt(len(texts))")
-        self.n_components = (
-            n_components if n_components is not None else int(len(texts) ** 0.5)
-        )
+            n_components = min(int(len(texts) ** 0.5), 25)
+            print("n_components is None, setting it to sqrt(len(texts)):", n_components)
+        self.n_components = n_components
         self.max_features = max_features
         self.min_df = min_df
         self.max_df = max_df
@@ -58,21 +56,38 @@ class SklearnTopicExtractor:
         self.lda.fit(X)
         return self
 
-    def get_topics(self, n_top_words=10) -> List[str]:
+    def get_topics(self, threshold_fraction: float = 0.8, n_word_limit = 15) -> List[str]:
         """
         Retrieve topics as a list of strings. Each topic is represented as a space-separated
-        string of the top words.
-
+        string of words that together account for at least `threshold_fraction` of the total topic weight.
+        
+        Parameters:
+            threshold_fraction (float): Fraction of the total weight to cover (default is 0.8, i.e. 80%).
+            
         Returns:
-            List of topic strings.
+            List[str]: A list of topic strings.
         """
         feature_names = self.vectorizer.get_feature_names_out()
         topics = []
+        
         for topic in self.lda.components_:
-            # Get indices of the top words for this topic.
-            top_indices = topic.argsort()[: -n_top_words - 1 : -1]
-            top_words = [feature_names[i] for i in top_indices]
+            total_weight = topic.sum()
+            cumulative_weight = 0.0
+            # Sort indices in descending order (highest weight first)
+            sorted_indices = topic.argsort()[::-1]
+            selected_indices = []
+            pos = 0
+            
+            for idx in sorted_indices:
+                pos += 1
+                selected_indices.append(idx)
+                cumulative_weight += topic[idx]
+                if cumulative_weight >= threshold_fraction * total_weight or pos >= n_word_limit:
+                    break
+            
+            top_words = [feature_names[i] for i in selected_indices]
             topics.append(" ".join(top_words))
+        
         return topics
 
     def transform(self, texts: List[str]):
@@ -95,16 +110,16 @@ if __name__ == "__main__":
 
     # Sample texts – in practice, these would be your document texts.
     remove = ("headers", "footers", "quotes")
-    newsgroups_train = fetch_20newsgroups(subset="train", remove=remove)
+    # newsgroups_train = fetch_20newsgroups(subset="train", remove=remove)
     newsgroups_test = fetch_20newsgroups(subset="test", remove=remove)
-    texts: list[str] = newsgroups_train.data + newsgroups_test.data
+    texts: list[str] =  newsgroups_test.data # + newsgroups_train.data
 
     # Initialize and fit the topic extractor.
     extractor = SklearnTopicExtractor(texts)
     extractor.fit(texts)
 
     # Retrieve the extracted (messy) topics.
-    messy_topics = extractor.get_topics(12)
+    messy_topics = extractor.get_topics(0.8)
     print("Topics from LDA:")
     for topic in messy_topics:
         print("-", topic)

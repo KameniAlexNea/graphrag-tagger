@@ -1,2 +1,4 @@
 aisuite[all]
 scikit-learn
+bertopic
+ktrain
