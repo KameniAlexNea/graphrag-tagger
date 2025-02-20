@@ -1,32 +1,38 @@
 from typing import List
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
+import logging
 
 
 class SklearnTopicExtractor:
     def __init__(
         self,
-        n_components: int = 5,
+        texts: List[str],
+        n_components: int = None,
         max_features: int = 512,
         min_df: int = 2,
         max_df: float = 0.95,
-        n_top_words: int = 10,
     ):
         """
         Initialize the topic extractor using scikit-learn's LDA.
 
         Parameters:
+            texts: List of strings, where each string is a document.
             n_components: Number of topics to extract.
             max_features: Maximum number of features for the CountVectorizer.
             min_df: Minimum document frequency for CountVectorizer.
             max_df: Maximum document frequency for CountVectorizer.
             n_top_words: Number of top words to display per topic.
         """
-        self.n_components = n_components
+        if n_components is None:
+            logging.info("n_components is None, setting it to sqrt(len(texts))")
+        self.n_components = (
+            n_components if n_components is not None else int(len(texts) ** 0.5)
+        )
         self.max_features = max_features
         self.min_df = min_df
         self.max_df = max_df
-        self.n_top_words = n_top_words
+        self.texts = texts
 
         # Create a CountVectorizer to produce a token count matrix.
         self.vectorizer = CountVectorizer(
@@ -43,6 +49,7 @@ class SklearnTopicExtractor:
 
         Parameters:
             texts: List of strings, where each string is a document.
+            n_top_words: Number of top words to display per topic.
 
         Returns:
             self (for chaining)
@@ -51,7 +58,7 @@ class SklearnTopicExtractor:
         self.lda.fit(X)
         return self
 
-    def get_topics(self, n_top_words=None) -> List[str]:
+    def get_topics(self, n_top_words=10) -> List[str]:
         """
         Retrieve topics as a list of strings. Each topic is represented as a space-separated
         string of the top words.
@@ -59,13 +66,11 @@ class SklearnTopicExtractor:
         Returns:
             List of topic strings.
         """
-        if n_top_words is None:
-            n_top_words = self.n_top_words
         feature_names = self.vectorizer.get_feature_names_out()
         topics = []
-        for topic_idx, topic in enumerate(self.lda.components_):
+        for topic in self.lda.components_:
             # Get indices of the top words for this topic.
-            top_indices = topic.argsort()[: -self.n_top_words - 1 : -1]
+            top_indices = topic.argsort()[: -n_top_words - 1 : -1]
             top_words = [feature_names[i] for i in top_indices]
             topics.append(" ".join(top_words))
         return topics
@@ -86,25 +91,25 @@ class SklearnTopicExtractor:
 
 # ----- Example usage -----
 if __name__ == "__main__":
+    from sklearn.datasets import fetch_20newsgroups
+
     # Sample texts – in practice, these would be your document texts.
-    texts = [
-        "The stock market crashed due to high inflation and economic uncertainty.",
-        "Advancements in machine learning and artificial intelligence are transforming technology.",
-        "The local football team won the championship after a thrilling season.",
-        "Healthcare innovations are improving patient outcomes and reducing costs.",
-    ]
+    remove = ("headers", "footers", "quotes")
+    newsgroups_train = fetch_20newsgroups(subset="train", remove=remove)
+    newsgroups_test = fetch_20newsgroups(subset="test", remove=remove)
+    texts: list[str] = newsgroups_train.data + newsgroups_test.data
 
     # Initialize and fit the topic extractor.
-    extractor = SklearnTopicExtractor(n_components=5, n_top_words=5)
+    extractor = SklearnTopicExtractor(texts)
     extractor.fit(texts)
 
     # Retrieve the extracted (messy) topics.
-    messy_topics = extractor.get_topics()
-    print("Messy Topics from LDA:")
+    messy_topics = extractor.get_topics(12)
+    print("Topics from LDA:")
     for topic in messy_topics:
         print("-", topic)
 
     # Optionally, transform new texts into the topic space.
-    topic_distributions = extractor.transform(texts)
+    topic_distributions = extractor.transform(texts[-10:])
     print("\nTopic distributions for sample texts:")
     print(topic_distributions)
