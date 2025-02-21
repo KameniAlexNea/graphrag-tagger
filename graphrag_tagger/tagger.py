@@ -4,6 +4,7 @@ import os
 
 import fitz
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from tqdm import tqdm
 
 from .chat.llm import LLM
 from .lda.kt_modelling import KtrainTopicExtractor
@@ -41,21 +42,21 @@ def main(params: dict):
         print("No texts extracted from PDFs.")
         return
 
+    print(f"Total chunk texts: {len(all_chunks)}")
+
     # Choose the topic extractor based on model_choice parameter
-    if params["model_choice"] == "sk":
-        topic_extractor = SklearnTopicExtractor(
-            n_components=params["n_components"],
-            max_features=params["n_features"],
-            min_df=params["min_df"],
-            max_df=params["max_df"],
-        )
-    else:
-        topic_extractor = KtrainTopicExtractor(
-            n_components=params["n_components"],
-            n_features=params["n_features"],
-            min_df=params["min_df"],
-            max_df=params["max_df"],
-        )
+    topic_class = (
+        SklearnTopicExtractor
+        if params["model_choice"] == "sk"
+        else KtrainTopicExtractor
+    )
+    topic_extractor = topic_class(
+        n_components=params["n_components"],
+        n_features=params["n_features"],
+        min_df=params["min_df"],
+        max_df=params["max_df"],
+    )
+
     # Fit topic extractor on available chunk texts
     texts_for_fitting = [item["chunk"] for item in all_chunks]
     topic_extractor.fit(texts_for_fitting)
@@ -69,7 +70,7 @@ def main(params: dict):
     os.makedirs(params["output_folder"], exist_ok=True)
 
     # Classify and save each text chunk with metadata including source_file
-    for i, entry in enumerate(all_chunks):
+    for i, entry in enumerate(tqdm(all_chunks, desc="Generating Tags")):
         classification = llm.classify(entry["chunk"], cleaned_topics)
         output_data = {
             "chunk": entry["chunk"],
