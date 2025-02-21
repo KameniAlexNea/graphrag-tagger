@@ -19,7 +19,7 @@ class SklearnTopicExtractor:
         """
         Initializes the topic extractor.
 
-        :param n_components: Number of topics to extract. If None, it is set to the square root of the number of 
+        :param n_components: Number of topics to extract. If None, it is set to the square root of the number of
                              documents used during fitting, capped at 25. Defaults to None.
         :type n_components: Optional[int]
         :param max_features: Maximum number of features (words) to consider in the vocabulary.
@@ -119,6 +119,7 @@ class SklearnTopicExtractor:
             topics.append(" ".join(top_words))
 
         return topics
+
 
 # ----- Example usage -----
 if __name__ == "__main__":

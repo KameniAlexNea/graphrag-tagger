@@ -8,6 +8,7 @@ class LLM:
     """
     A wrapper for the LLM model to clean topics and classify document chunks.
     """
+
     def __init__(self, model="ollama:phi4"):
         self.model = ai.Client()
         self.model_name = model

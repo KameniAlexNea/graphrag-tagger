@@ -5,13 +5,13 @@ import re
 def parse_json(json_str: str):
     """
     Parses a JSON object from a string that may contain extra text.
-    
+
     This function attempts three approaches to extract JSON:
-    
+
     1. Directly parsing the entire string.
     2. Extracting JSON enclosed within triple backticks (```json ... ```).
     3. Extracting content between the first '{' and the last '}' or between '[' and ']'.
-    
+
     :param json_str: The input string potentially containing a JSON object.
     :type json_str: str
     :return: The parsed JSON object if successfully extracted, otherwise None.
