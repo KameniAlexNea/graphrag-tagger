@@ -17,18 +17,17 @@ class SklearnTopicExtractor:
         max_df: float = 0.95,
     ):
         """
-        Initialize the topic extractor.
+        Initializes the topic extractor.
 
-        Parameters:
-            n_components (int, optional): Number of topics to extract.
-                If None, it will be automatically determined as the square root of the number of documents
-                used during fitting, capped at 25. Defaults to None.
-            max_features (int): Maximum number of features (words) to consider in the vocabulary.
-                Limits the vocabulary size by frequency. Defaults to 512.
-            min_df (int): Minimum document frequency for a word to be included in the vocabulary.
-                Words appearing in fewer than min_df documents are discarded. Defaults to 2.
-            max_df (float): Maximum document frequency for a word to be included in the vocabulary.
-                Words appearing in more than max_df proportion of documents are discarded. Defaults to 0.95.
+        :param n_components: Number of topics to extract. If None, it is set to the square root of the number of 
+                             documents used during fitting, capped at 25. Defaults to None.
+        :type n_components: Optional[int]
+        :param max_features: Maximum number of features (words) to consider in the vocabulary.
+        :type max_features: int
+        :param min_df: Minimum document frequency for a word to be included in the vocabulary.
+        :type min_df: int
+        :param max_df: Maximum document frequency for a word to be included in the vocabulary.
+        :type max_df: float
         """
         self.n_components = n_components
         self.max_features = max_features
@@ -41,13 +40,13 @@ class SklearnTopicExtractor:
 
     def fit(self, texts: List[str]):
         """
-        Fit the LDA topic model on a list of document texts.
+        Fits the LDA topic model on a list of document texts.
 
-        Parameters:
-            texts (List[str]): List of strings, where each string is a document.
-
-        Returns:
-            self: Returns the instance itself to allow for method chaining.
+        :param texts: List of strings, where each string is a document.
+        :type texts: List[str]
+        :raises ValueError: If the input list is empty.
+        :return: Returns the instance itself to allow for method chaining.
+        :rtype: SklearnTopicExtractor
         """
         if not texts:
             raise ValueError("Input 'texts' list cannot be empty.")
@@ -75,18 +74,19 @@ class SklearnTopicExtractor:
         self, threshold_fraction: float = 0.8, n_word_limit: int = 10
     ) -> List[str]:
         """
-        Retrieve topics as a list of strings.
+        Retrieves topics as a list of strings.
 
         Each topic is represented as a space-separated string of words that together
         account for at least `threshold_fraction` of the total topic weight,
         or up to `n_word_limit` words, whichever comes first.
 
-        Parameters:
-            threshold_fraction (float): Fraction of the total weight to cover (default is 0.8, i.e., 80%).
-            n_word_limit (int): Maximum number of words to include in each topic string. Defaults to 15.
-
-        Returns:
-            List[str]: A list of topic strings.
+        :param threshold_fraction: Fraction of the total weight to cover (default is 0.8, i.e., 80%).
+        :type threshold_fraction: float
+        :param n_word_limit: Maximum number of words to include in each topic string.
+        :type n_word_limit: int
+        :raises ValueError: If the model has not been fitted yet.
+        :return: A list of topic strings.
+        :rtype: List[str]
         """
         if self.vectorizer is None or self.lda is None:
             raise ValueError(
@@ -119,27 +119,6 @@ class SklearnTopicExtractor:
             topics.append(" ".join(top_words))
 
         return topics
-
-    def transform(self, texts: List[str]):
-        """
-        Transform new texts into the topic distribution space.
-
-        Parameters:
-            texts (List[str]): List of document texts to transform.
-
-        Returns:
-            Array of shape (n_samples, n_components) with topic probabilities for each document.
-        """
-        if self.vectorizer is None or self.lda is None:
-            raise ValueError(
-                "The model must be fitted first. Call 'fit' method before 'transform'."
-            )
-        if not texts:
-            raise ValueError("Input 'texts' list cannot be empty.")
-
-        X = self.vectorizer.transform(texts)
-        return self.lda.transform(X)
-
 
 # ----- Example usage -----
 if __name__ == "__main__":

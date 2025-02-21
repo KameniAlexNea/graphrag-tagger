@@ -4,16 +4,18 @@ import re
 
 def parse_json(json_str: str):
     """
-    Attempt to parse a JSON object from a string that may include extra verbose text.
-    This function first tries to parse the whole string. If that fails, it looks for a block
-    delimited by ```json and ```. If still unsuccessful, it falls back to extracting the substring
-    between the first '{' and the last '}'.
-
-    Parameters:
-        json_str (str): The input string that may contain a JSON block along with extra text.
-
-    Returns:
-        The parsed JSON object, or None if no valid JSON could be found.
+    Parses a JSON object from a string that may contain extra text.
+    
+    This function attempts three approaches to extract JSON:
+    
+    1. Directly parsing the entire string.
+    2. Extracting JSON enclosed within triple backticks (```json ... ```).
+    3. Extracting content between the first '{' and the last '}' or between '[' and ']'.
+    
+    :param json_str: The input string potentially containing a JSON object.
+    :type json_str: str
+    :return: The parsed JSON object if successfully extracted, otherwise None.
+    :rtype: dict or list or None
     """
     # Attempt 1: Try to load the entire string as JSON.
     try:
