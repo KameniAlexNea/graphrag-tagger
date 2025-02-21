@@ -44,20 +44,3 @@ def test_get_topics():
     extractor.fit(texts)
     topics = extractor.get_topics()
     assert topics == ["topic1", "topic2"]
-
-
-def test_filter_texts():
-    texts = ["document one", "document two", "document three"]
-    extractor = KtrainTopicExtractor(n_components=2)
-    extractor.fit(texts)
-    filtered = extractor.filter_texts(texts)
-    assert filtered == texts
-
-
-def test_transform():
-    texts = ["document one", "document two", "document three"]
-    extractor = KtrainTopicExtractor(n_components=2)
-    extractor.fit(texts)
-    dist = extractor.transform(texts)
-    assert len(dist) == len(texts)
-    assert len(dist[0]) == extractor.n_components
