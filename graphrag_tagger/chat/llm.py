@@ -1,7 +1,7 @@
 import aisuite as ai
 
 from .parser import parse_json
-from .prompts import CREATE_TOPICS, CLASSIFY_PROMPT
+from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS
 
 
 class LLM:

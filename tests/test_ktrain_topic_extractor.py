@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from graphrag_tagger.lda.kt_modelling import KtrainTopicExtractor
 
@@ -32,46 +32,32 @@ import graphrag_tagger.lda.kt_modelling as kt_modelling
 kt_modelling.get_topic_model = dummy_get_topic_model
 
 
-class TestKtrainTopicExtractor(unittest.TestCase):
-    def test_fit_with_empty_texts(self):
-        extractor = KtrainTopicExtractor()
-        with self.assertRaises(ValueError):
-            extractor.fit([])
-
-    def test_get_topics(self):
-        texts = [
-            "document one",
-            "document two",
-            "document three"
-        ]
-        extractor = KtrainTopicExtractor(n_components=2)
-        extractor.fit(texts)
-        topics = extractor.get_topics()
-        self.assertEqual(topics, ["topic1", "topic2"])
-
-    def test_filter_texts(self):
-        texts = [
-            "document one",
-            "document two",
-            "document three"
-        ]
-        extractor = KtrainTopicExtractor(n_components=2)
-        extractor.fit(texts)
-        filtered = extractor.filter_texts(texts)
-        self.assertEqual(filtered, texts)
-
-    def test_transform(self):
-        texts = [
-            "document one",
-            "document two",
-            "document three"
-        ]
-        extractor = KtrainTopicExtractor(n_components=2)
-        extractor.fit(texts)
-        dist = extractor.transform(texts)
-        self.assertEqual(len(dist), len(texts))
-        self.assertEqual(len(dist[0]), extractor.n_components)
+def test_fit_with_empty_texts():
+    extractor = KtrainTopicExtractor()
+    with pytest.raises(ValueError):
+        extractor.fit([])
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_get_topics():
+    texts = ["document one", "document two", "document three"]
+    extractor = KtrainTopicExtractor(n_components=2)
+    extractor.fit(texts)
+    topics = extractor.get_topics()
+    assert topics == ["topic1", "topic2"]
+
+
+def test_filter_texts():
+    texts = ["document one", "document two", "document three"]
+    extractor = KtrainTopicExtractor(n_components=2)
+    extractor.fit(texts)
+    filtered = extractor.filter_texts(texts)
+    assert filtered == texts
+
+
+def test_transform():
+    texts = ["document one", "document two", "document three"]
+    extractor = KtrainTopicExtractor(n_components=2)
+    extractor.fit(texts)
+    dist = extractor.transform(texts)
+    assert len(dist) == len(texts)
+    assert len(dist[0]) == extractor.n_components

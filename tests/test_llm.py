@@ -1,5 +1,3 @@
-import unittest
-
 from graphrag_tagger.chat.llm import LLM
 
 
@@ -18,17 +16,13 @@ class DummyLLM(LLM):
         return "{}"
 
 
-class TestLLM(unittest.TestCase):
-    def test_clean_topics(self):
-        llm = DummyLLM()
-        result = llm.clean_topics(["messy topic one", "messy topic two"])
-        self.assertEqual(result, {"topics": ["TopicA", "TopicB"]})
-
-    def test_classify(self):
-        llm = DummyLLM()
-        result = llm.classify("Some document text", ["TopicA", "TopicB", "TopicC"])
-        self.assertEqual(result, ["TopicA", "TopicC"])
+def test_clean_topics():
+    llm = DummyLLM()
+    result = llm.clean_topics(["messy topic one", "messy topic two"])
+    assert result == {"topics": ["TopicA", "TopicB"]}
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_classify():
+    llm = DummyLLM()
+    result = llm.classify("Some document text", ["TopicA", "TopicB", "TopicC"])
+    assert result == ["TopicA", "TopicC"]
