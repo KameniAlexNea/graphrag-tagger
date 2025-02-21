@@ -22,8 +22,14 @@ release = '0.1.0'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # If using Google-style or NumPy docstrings
-    'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx'
 ]
+
+# html_theme_options = {
+#     "rightsidebar": "true",
+#     "relbarbgcolor": "black"
+# }
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -33,5 +39,5 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'haiku'
+html_theme = 'scrolls'
 html_static_path = ['_static']
