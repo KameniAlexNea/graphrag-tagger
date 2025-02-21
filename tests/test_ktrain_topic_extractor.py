@@ -39,21 +39,33 @@ class TestKtrainTopicExtractor(unittest.TestCase):
             extractor.fit([])
 
     def test_get_topics(self):
-        texts = ["document one", "document two"]
+        texts = [
+            "document one",
+            "document two",
+            "document three"
+        ]
         extractor = KtrainTopicExtractor(n_components=2)
         extractor.fit(texts)
         topics = extractor.get_topics()
         self.assertEqual(topics, ["topic1", "topic2"])
 
     def test_filter_texts(self):
-        texts = ["document one", "document two"]
+        texts = [
+            "document one",
+            "document two",
+            "document three"
+        ]
         extractor = KtrainTopicExtractor(n_components=2)
         extractor.fit(texts)
         filtered = extractor.filter_texts(texts)
         self.assertEqual(filtered, texts)
 
     def test_transform(self):
-        texts = ["document one", "document two"]
+        texts = [
+            "document one",
+            "document two",
+            "document three"
+        ]
         extractor = KtrainTopicExtractor(n_components=2)
         extractor.fit(texts)
         dist = extractor.transform(texts)

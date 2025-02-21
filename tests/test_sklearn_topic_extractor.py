@@ -10,7 +10,11 @@ class TestSklearnTopicExtractor(unittest.TestCase):
             extractor.fit([])
 
     def test_get_topics(self):
-        texts = ["this is a test document", "another test document"]
+        texts = [
+            "this is a test document", 
+            "another test document",
+            "yet another test document"
+        ]
         extractor = SklearnTopicExtractor(n_components=2, max_features=20)
         extractor.fit(texts)
         topics = extractor.get_topics()
@@ -18,7 +22,11 @@ class TestSklearnTopicExtractor(unittest.TestCase):
         self.assertTrue(all(isinstance(topic, str) for topic in topics))
 
     def test_transform(self):
-        texts = ["this is a test document", "another test document"]
+        texts = [
+            "this is a test document", 
+            "another test document",
+            "yet another test document"
+        ]
         extractor = SklearnTopicExtractor(n_components=2, max_features=20)
         extractor.fit(texts)
         topic_distribution = extractor.transform(texts)
