@@ -3,8 +3,9 @@ import json
 import os
 
 import fitz
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+import tiktoken
 from tqdm import tqdm
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from .chat.llm import LLM
 from .lda.kt_modelling import KtrainTopicExtractor
@@ -12,6 +13,14 @@ from .lda.sk_modelling import SklearnTopicExtractor
 
 
 def load_pdf_texts(folder_path: str):
+    """
+    Loads text from all PDFs in a given folder.
+
+    :param folder_path: Path to the folder containing PDF files.
+    :type folder_path: str
+    :return: Dictionary where keys are file paths and values are extracted text.
+    :rtype: dict
+    """
     texts = {}
     for file_name in os.listdir(folder_path):
         if file_name.lower().endswith(".pdf"):
@@ -25,14 +34,26 @@ def load_pdf_texts(folder_path: str):
 
 
 def main(params: dict):
+    """
+    Main function to extract text from PDFs, perform topic modeling, clean topics using LLM, and save results.
+
+    :param params: Dictionary containing processing parameters.
+    :type params: dict
+    """
     # Load PDFs from folder
     pdf_texts = load_pdf_texts(params["pdf_folder"])
 
     # Split texts into chunks along with source file metadata
     all_chunks = []  # each element is dict: {"chunk": str, "source_file": str}
+
+    encoding = tiktoken.get_encoding("cl100k_base")
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=params["chunk_size"], chunk_overlap=params["chunk_overlap"]
+        chunk_size=params["chunk_size"],
+        chunk_overlap=params["chunk_overlap"],
+        length_function=lambda x: len(encoding.encode(x)),
     )
+
+    # Split texts into chunks along with source file metadata
     for file_path, text in pdf_texts.items():
         chunks = splitter.split_text(text)
         for chunk in chunks:
@@ -91,10 +112,10 @@ if __name__ == "__main__":
         "--pdf_folder", type=str, required=True, help="Path to folder containing PDFs"
     )
     parser.add_argument(
-        "--chunk_size", type=int, default=1000, help="Chunk size for text splitter"
+        "--chunk_size", type=int, default=512, help="Chunk size for text splitter"
     )
     parser.add_argument(
-        "--chunk_overlap", type=int, default=0, help="Chunk overlap for text splitter"
+        "--chunk_overlap", type=int, default=25, help="Chunk overlap for text splitter"
     )
     parser.add_argument(
         "--n_components", type=int, default=None, help="Number of topics to extract"
