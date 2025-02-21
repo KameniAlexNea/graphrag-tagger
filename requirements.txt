@@ -4,3 +4,5 @@ bertopic
 ktrain
 docstring_parser
 ollama # using local built-in library by default
+langchain-text-splitters
+PyMuPDF

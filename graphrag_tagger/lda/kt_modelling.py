@@ -3,7 +3,7 @@ from typing import List
 from ktrain.text import get_topic_model
 
 
-class TopicExtractor:
+class KtrainTopicExtractor:
     """
     Topic extractor using ktrain's topic modeling capabilities.
 
@@ -13,6 +13,7 @@ class TopicExtractor:
 
     def __init__(
         self,
+        n_components: int = None,
         n_features: int = 512,
         min_df: int = 2,
         max_df: float = 0.95,
@@ -36,6 +37,7 @@ class TopicExtractor:
         self.min_df = min_df
         self.max_df = max_df
         self.threshold = threshold
+        self.n_components = n_components
         self.topic_model = None  # To store the ktrain topic model instance
 
     def fit(self, texts: List[str]):
@@ -58,7 +60,11 @@ class TopicExtractor:
             raise ValueError("Input 'texts' list cannot be empty.")
 
         self.topic_model = get_topic_model(
-            texts, n_features=self.n_features, min_df=self.min_df, max_df=self.max_df
+            texts,
+            n_features=self.n_features,
+            min_df=self.min_df,
+            max_df=self.max_df,
+            n_topics=self.n_components,
         )
         self.topic_model.build(texts, threshold=self.threshold)
         return self
@@ -139,7 +145,7 @@ if __name__ == "__main__":
     texts: List[str] = newsgroups_test.data
 
     # Initialize and fit the topic extractor.
-    extractor = TopicExtractor()
+    extractor = KtrainTopicExtractor()
     extractor.fit(texts)
 
     # Retrieve the extracted topics.

@@ -72,7 +72,7 @@ class SklearnTopicExtractor:
         return self
 
     def get_topics(
-        self, threshold_fraction: float = 0.8, n_word_limit: int = 15
+        self, threshold_fraction: float = 0.8, n_word_limit: int = 10
     ) -> List[str]:
         """
         Retrieve topics as a list of strings.
