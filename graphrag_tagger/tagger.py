@@ -3,6 +3,8 @@ import json
 import os
 
 import fitz
+import tiktoken
+from tqdm import tqdm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from .chat.llm import LLM
@@ -43,9 +45,15 @@ def main(params: dict):
 
     # Split texts into chunks along with source file metadata
     all_chunks = []  # each element is dict: {"chunk": str, "source_file": str}
+
+    encoding = tiktoken.get_encoding("cl100k_base")
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=params["chunk_size"], chunk_overlap=params["chunk_overlap"]
+        chunk_size=params["chunk_size"],
+        chunk_overlap=params["chunk_overlap"],
+        length_function=lambda x: len(encoding.encode(x)),
     )
+
+    # Split texts into chunks along with source file metadata
     for file_path, text in pdf_texts.items():
         chunks = splitter.split_text(text)
         for chunk in chunks:
@@ -55,21 +63,21 @@ def main(params: dict):
         print("No texts extracted from PDFs.")
         return
 
+    print(f"Total chunk texts: {len(all_chunks)}")
+
     # Choose the topic extractor based on model_choice parameter
-    if params["model_choice"] == "sk":
-        topic_extractor = SklearnTopicExtractor(
-            n_components=params["n_components"],
-            max_features=params["n_features"],
-            min_df=params["min_df"],
-            max_df=params["max_df"],
-        )
-    else:
-        topic_extractor = KtrainTopicExtractor(
-            n_components=params["n_components"],
-            n_features=params["n_features"],
-            min_df=params["min_df"],
-            max_df=params["max_df"],
-        )
+    topic_class = (
+        SklearnTopicExtractor
+        if params["model_choice"] == "sk"
+        else KtrainTopicExtractor
+    )
+    topic_extractor = topic_class(
+        n_components=params["n_components"],
+        n_features=params["n_features"],
+        min_df=params["min_df"],
+        max_df=params["max_df"],
+    )
+
     # Fit topic extractor on available chunk texts
     texts_for_fitting = [item["chunk"] for item in all_chunks]
     topic_extractor.fit(texts_for_fitting)
@@ -83,7 +91,7 @@ def main(params: dict):
     os.makedirs(params["output_folder"], exist_ok=True)
 
     # Classify and save each text chunk with metadata including source_file
-    for i, entry in enumerate(all_chunks):
+    for i, entry in enumerate(tqdm(all_chunks, desc="Generating Tags")):
         classification = llm.classify(entry["chunk"], cleaned_topics)
         output_data = {
             "chunk": entry["chunk"],
@@ -104,10 +112,10 @@ if __name__ == "__main__":
         "--pdf_folder", type=str, required=True, help="Path to folder containing PDFs"
     )
     parser.add_argument(
-        "--chunk_size", type=int, default=1000, help="Chunk size for text splitter"
+        "--chunk_size", type=int, default=512, help="Chunk size for text splitter"
     )
     parser.add_argument(
-        "--chunk_overlap", type=int, default=0, help="Chunk overlap for text splitter"
+        "--chunk_overlap", type=int, default=25, help="Chunk overlap for text splitter"
     )
     parser.add_argument(
         "--n_components", type=int, default=None, help="Number of topics to extract"
