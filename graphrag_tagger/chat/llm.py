@@ -1,6 +1,7 @@
 import aisuite as ai
-from .prompts import CREATE_TOPICS
+
 from .parser import parse_json
+from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS
 
 
 class LLM:
@@ -22,9 +23,9 @@ class LLM:
         prompt = CREATE_TOPICS.format(topics=topics_str)
         results = self.__call__([{"role": "system", "content": prompt}])
         return parse_json(results)
-    
+
     def classify(self, document_chunk: str, topics: list):
         topics_str = "\n".join(topics)
-        prompt = CREATE_TOPICS.format(text=document_chunk, topics=topics_str)
+        prompt = CLASSIFY_PROMPT.format(text=document_chunk, topics=topics_str)
         results = self.__call__([{"role": "system", "content": prompt}])
         return parse_json(results)

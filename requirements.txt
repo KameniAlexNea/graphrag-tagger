@@ -1,6 +1,7 @@
-aisuite[ollama]
-scikit-learn
-bertopic
-ktrain
-docstring_parser
-ollama # using local built-in library by default
+aisuite[ollama]==0.1.10
+scikit-learn==1.6.1
+ktrain==0.41.4
+docstring_parser==0.16
+ollama==0.4.7
+langchain-text-splitters==0.3.6
+PyMuPDF==1.25.3
