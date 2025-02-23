@@ -1,43 +1,60 @@
 # graphrag-tagger
 
-graphrag-tagger is a lightweight toolkit designed for topic extraction and tagging in GraphRAG applications. The project leverages classic LDA techniques along with modern LLM capabilities to generate, refine, and classify topic labels.
+graphrag-tagger is a lightweight toolkit for extracting topics from PDF documents and then building graphs to visualize connections between text segments.
+
+## Overview
+
+This package processes PDF files by:
+
+- Extracting text using a PDF library.
+- Splitting the text into manageable chunks.
+- Performing topic modeling with two alternative implementations:
+  - A scikit-learn based approach using classic LDA.
+  - A ktrain-powered approach with configurable vocabulary filtering.
+- Refining topics using an LLM to clean and classify the extracted topics.
+- Building graphs to show relationships between text chunks based on topic similarity, leveraging network analysis.
+
+Key libraries used include:
+
+- PyMuPDF for PDF processing.
+- scikit-learn and ktrain for topic modeling.
+- An LLM client for natural language processing.
+- networkx for graph construction and analysis.
 
 ## Installation
 
-Install the package via pip:
+Build the package using the recommended tool:
+
+```bash
+python -m build
+```
+
+Then install locally:
+
 ```bash
 pip install .
 ```
 
-## Components
+## Usage
 
-### Topic Modeling
-- **Sklearn Implementation**  
-  Located in `graphrag_tagger/lda/sk_modelling.py`, this module:
-  - Uses scikit-learn's Latent Dirichlet Allocation (LDA) to extract topics.
-  - Auto-determines the number of topics if not specified.
-  - Provides methods to fit on text data, transform new text, and extract themes based on weight thresholds.
+### Command-Line Interface
 
-- **KTrain Implementation**  
-  Located in `graphrag_tagger/lda/kt_modelling.py`, this module:
-  - Uses ktrain's topic modeling functions.
-  - Builds an LDA model with configurable vocabulary and frequency-based filtering.
-  - Offers functions for topic extraction, filtering texts, and transforming documents into topic distributions.
+You can run the pipeline to process PDFs and extract topic information:
 
-### LLM Integration
-- **Prompt Templates**  
-  Found in `graphrag_tagger/chat/prompts.py`, these define the instructions for:
-  - Refining and cleaning up messy topics.
-  - Classifying text according to candidate topics.
-  
-- **JSON Parser**  
-  Implemented in `graphrag_tagger/chat/parser.py`, this module:
-  - Provides robust JSON parsing by handling common formatting issues.
-  - Extracts relevant JSON blocks from verbose text.
+```bash
+python -m graphrag_tagger.tagger --pdf_folder /path/to/pdfs --output_folder /path/to/output --chunk_size 512 --chunk_overlap 25 --n_features 512 --min_df 2 --max_df 0.95 --llm_model ollama:phi4 --model_choice sk
+```
 
-- **LLM Client**  
-  Located in `graphrag_tagger/chat/llm.py`, this module:
-  - Integrates with an LLM (via aisuite) to clean topics and classify document excerpts.
-  - Uses the prompt templates along with the JSON parser to deliver refined outputs.
+And build a graph from the output:
 
-## Usage Example
+```bash
+python -m graphrag_tagger.build_graph --input_folder /path/to/output --output_folder /path/to/graph --threshold_percentile 97.5
+```
+
+## How It Works
+
+1. PDF files are read and their text is extracted.
+2. Text is segmented into chunks based on specified sizes.
+3. Topic modeling algorithms analyze these chunks to generate candidate topics.
+4. A language model cleans and refines these topics.
+5. A graph is constructed where nodes represent text chunks and edges represent shared topic contributions, allowing you to visualize clusters and connections.
