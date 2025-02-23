@@ -5,17 +5,21 @@ from glob import glob
 import networkx as nx
 import numpy as np
 import pandas as pd
+from tqdm import tqdm  # Added tqdm import for progress indication
 
 
 def load_raw_files(input_folder: str, pattern: str = "*.json"):
     files = sorted(glob(os.path.join(input_folder, pattern)))
     print(f"Found {len(files)} files in {input_folder}.")
-    raws = [json.load(open(f)) for f in files]
+    raws = []
+    for f in tqdm(files, desc="Loading raw files"):
+        raws.append(json.load(open(f)))
     print(f"Loaded {len(raws)} raw documents.")
     return raws
 
 
 def compute_scores(raws):
+    print("Computing scores...")
     # Count topic rankings
     counter: dict[str, dict] = {}
     for raw in raws:
@@ -30,10 +34,12 @@ def compute_scores(raws):
     totals = scores.sum()
     scores = scores.apply(lambda x: np.log(totals / x))
     scores_map = scores.to_dict()
+    print("Scores computed.")
     return scores_map
 
 
 def build_graph(raws, scores_map):
+    print("Building graph...")
     chunks = raws
     G = nx.Graph()
     for idx, chunk in enumerate(chunks):
@@ -47,7 +53,7 @@ def build_graph(raws, scores_map):
     def compute_contribution(rank1: int, rank2: int, topic: str) -> float:
         return 1.0 / (rank1 + 1) + 1.0 / (rank2 + 1) + scores_map[topic]
 
-    for i in range(len(chunks)):
+    for i in tqdm(range(len(chunks)), desc="Building nodes & edges"):
         for j in range(i + 1, len(chunks)):
             common_details = []
             total_weight = 0.0
@@ -69,12 +75,12 @@ def build_graph(raws, scores_map):
                 total_weight += contribution
             if common_details:
                 G.add_edge(i, j, weight=total_weight, common=common_details)
-    print("Number of nodes:", G.number_of_nodes())
-    print("Number of edges:", G.number_of_edges())
+    print("Graph built. Nodes:", G.number_of_nodes(), "Edges:", G.number_of_edges())
     return G
 
 
 def prune_graph(G, threshold_percentile: float):
+    print("Starting graph pruning...")
     edge_weights = [data.get("weight", 0) for _, _, data in G.edges(data=True)]
     print("Min weight:", min(edge_weights))
     print("Max weight:", max(edge_weights))
@@ -92,12 +98,12 @@ def prune_graph(G, threshold_percentile: float):
         f"Removing {len(edges_to_remove)} edges out of {G_pruned.number_of_edges()}..."
     )
     G_pruned.remove_edges_from(edges_to_remove)
-    print("Pruned graph - Number of nodes:", G_pruned.number_of_nodes())
-    print("Pruned graph - Number of edges:", G_pruned.number_of_edges())
+    print("Graph pruned. Nodes:", G_pruned.number_of_nodes(), "Edges:", G_pruned.number_of_edges())
     return G_pruned
 
 
 def update_graph_components(G):
+    print("Computing connected components...")
     components = list(nx.connected_components(G))
     print("Number of connected components:", len(components))
     component_map = {}
@@ -118,10 +124,7 @@ def update_graph_components(G):
 def process_graph(
     input_folder: str, output_folder: str, threshold_percentile: float = 97.5
 ):
-    """
-    Process JSON files from input_folder, build and prune a graph,
-    and save connected components to output_folder.
-    """
+    print("Processing graph...")
     pattern = "*.json"
     if threshold_percentile < 1:
         threshold_percentile *= 100
@@ -135,6 +138,7 @@ def process_graph(
     with open(output_file, "w") as f:
         json.dump(component_map, f)
     print(f"Connected components map saved to {output_file}")
+    print("Graph processing complete.")
     return G_pruned
 
 
