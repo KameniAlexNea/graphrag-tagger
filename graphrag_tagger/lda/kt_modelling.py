@@ -1,6 +1,6 @@
 from typing import List
 
-from ktrain.text import get_topic_model
+from ktrain.text.eda import TopicModel
 
 
 class KtrainTopicExtractor:
@@ -38,7 +38,7 @@ class KtrainTopicExtractor:
         self.max_df = max_df
         self.threshold = threshold
         self.n_components = n_components
-        self.topic_model = None  # To store the ktrain topic model instance
+        self.topic_model: TopicModel = None  # To store the ktrain topic model instance
 
     def fit(self, texts: List[str]):
         """
@@ -53,7 +53,7 @@ class KtrainTopicExtractor:
         if not texts:
             raise ValueError("Input 'texts' list cannot be empty.")
 
-        self.topic_model = get_topic_model(
+        self.topic_model = TopicModel(
             texts,
             n_features=self.n_features,
             min_df=self.min_df,

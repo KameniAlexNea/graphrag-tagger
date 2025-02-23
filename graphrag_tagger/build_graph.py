@@ -18,7 +18,7 @@ def load_raw_files(input_folder: str, pattern: str = "*.json"):
     return raws
 
 
-def compute_scores(raws):
+def compute_scores(raws: list[dict]) -> dict:
     print("Computing scores...")
     # Count topic rankings
     counter: dict[str, dict] = {}
@@ -38,7 +38,7 @@ def compute_scores(raws):
     return scores_map
 
 
-def build_graph(raws, scores_map):
+def build_graph(raws: list[dict], scores_map: dict[str, float]):
     print("Building graph...")
     chunks = raws
     G = nx.Graph()
@@ -107,7 +107,7 @@ def prune_graph(G: nx.Graph, threshold_percentile: float):
     return G_pruned
 
 
-def update_graph_components(G):
+def update_graph_components(G: nx.Graph):
     print("Computing connected components...")
     components = list(nx.connected_components(G))
     print("Number of connected components:", len(components))

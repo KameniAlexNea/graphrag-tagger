@@ -1,5 +1,7 @@
 import pytest
 
+# Patch get_topic_model in kt_modelling.
+import graphrag_tagger.lda.kt_modelling as kt_modelling
 from graphrag_tagger.lda.kt_modelling import KtrainTopicExtractor
 
 
@@ -25,9 +27,6 @@ class DummyTopicModel:
 def dummy_get_topic_model(texts, n_features, min_df, max_df, n_topics):
     return DummyTopicModel(texts, n_features, min_df, max_df, n_topics)
 
-
-# Patch get_topic_model in kt_modelling.
-import graphrag_tagger.lda.kt_modelling as kt_modelling
 
 kt_modelling.get_topic_model = dummy_get_topic_model
 

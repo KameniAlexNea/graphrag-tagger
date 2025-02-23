@@ -12,7 +12,7 @@ class SklearnTopicExtractor:
     def __init__(
         self,
         n_components: Optional[int] = None,
-        max_features: int = 512,
+        n_features: int = 512,
         min_df: int = 2,
         max_df: float = 0.95,
     ):
@@ -22,15 +22,15 @@ class SklearnTopicExtractor:
         :param n_components: Number of topics to extract. If None, it is set to the square root of the number of
                              documents used during fitting, capped at 25. Defaults to None.
         :type n_components: Optional[int]
-        :param max_features: Maximum number of features (words) to consider in the vocabulary.
-        :type max_features: int
+        :param n_features: Maximum number of features (words) to consider in the vocabulary.
+        :type n_features: int
         :param min_df: Minimum document frequency for a word to be included in the vocabulary.
         :type min_df: int
         :param max_df: Maximum document frequency for a word to be included in the vocabulary.
         :type max_df: float
         """
         self.n_components = n_components
-        self.max_features = max_features
+        self.max_features = n_features
         self.min_df = min_df
         self.max_df = max_df
 
