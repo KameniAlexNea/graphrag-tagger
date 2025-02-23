@@ -38,8 +38,10 @@ def test_fit_with_empty_texts():
 
 
 def test_get_topics():
-    texts = ["document one", "document two", "document three"]
-    extractor = KtrainTopicExtractor(n_components=2)
+    texts = ["document one", "document two", "document three", "document four"]
+    extractor = KtrainTopicExtractor(
+        n_components=2, n_features=3, min_df=0.0, max_df=1.0
+    )
     extractor.fit(texts)
     topics = extractor.get_topics()
     assert topics == ["topic1", "topic2"]
