@@ -57,8 +57,8 @@ def build_graph(raws, scores_map):
         for j in range(i + 1, len(chunks)):
             common_details = []
             total_weight = 0.0
-            classifications_i = chunks[i]["classification"]
-            classifications_j = chunks[j]["classification"]
+            classifications_i: list = chunks[i]["classification"]
+            classifications_j: list = chunks[j]["classification"]
             topics = set(classifications_i).intersection(classifications_j)
             for topic in topics:
                 rank_i = classifications_i.index(topic)
@@ -79,7 +79,7 @@ def build_graph(raws, scores_map):
     return G
 
 
-def prune_graph(G, threshold_percentile: float):
+def prune_graph(G: nx.Graph, threshold_percentile: float):
     print("Starting graph pruning...")
     edge_weights = [data.get("weight", 0) for _, _, data in G.edges(data=True)]
     print("Min weight:", min(edge_weights))
