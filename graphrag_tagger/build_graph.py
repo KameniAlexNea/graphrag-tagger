@@ -98,7 +98,12 @@ def prune_graph(G, threshold_percentile: float):
         f"Removing {len(edges_to_remove)} edges out of {G_pruned.number_of_edges()}..."
     )
     G_pruned.remove_edges_from(edges_to_remove)
-    print("Graph pruned. Nodes:", G_pruned.number_of_nodes(), "Edges:", G_pruned.number_of_edges())
+    print(
+        "Graph pruned. Nodes:",
+        G_pruned.number_of_nodes(),
+        "Edges:",
+        G_pruned.number_of_edges(),
+    )
     return G_pruned
 
 
