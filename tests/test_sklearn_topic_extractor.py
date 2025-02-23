@@ -15,7 +15,7 @@ def test_get_topics():
         "another test document",
         "yet another test document",
     ]
-    extractor = SklearnTopicExtractor(n_components=2, max_features=20)
+    extractor = SklearnTopicExtractor(n_components=2, n_features=20)
     extractor.fit(texts)
     topics = extractor.get_topics()
     assert isinstance(topics, list)
