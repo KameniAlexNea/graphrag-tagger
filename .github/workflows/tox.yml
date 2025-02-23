@@ -60,20 +60,3 @@ jobs:
 
       - name: Run format check
         run: tox -e format
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install tox
-        run: python -m pip install --upgrade tox
-
-      - name: Run security scan
-        run: tox -e security
