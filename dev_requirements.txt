@@ -3,3 +3,4 @@ pytest
 sphinx
 wheel
 twine
+build
