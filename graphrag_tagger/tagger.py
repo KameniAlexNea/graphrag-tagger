@@ -4,8 +4,8 @@ import os
 
 import fitz
 import tiktoken
-from tqdm import tqdm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from tqdm import tqdm
 
 from .chat.llm import LLM
 from .lda.kt_modelling import KtrainTopicExtractor
