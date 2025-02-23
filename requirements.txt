@@ -7,3 +7,4 @@ langchain-text-splitters
 PyMuPDF
 tiktoken
 networkx
+tqdm
