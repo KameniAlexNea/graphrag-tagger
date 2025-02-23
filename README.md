@@ -1,60 +1,83 @@
-# graphrag-tagger
+# **graphrag-tagger**  
+*A lightweight toolkit for extracting topics from PDFs and visualizing their connections using graphs.*  
 
-graphrag-tagger is a lightweight toolkit for extracting topics from PDF documents and then building graphs to visualize connections between text segments.
+## **Overview**  
 
-## Overview
+`graphrag-tagger` automates topic extraction from PDF documents and builds graphs to visualize relationships between text segments. It offers a modular pipeline for processing text, applying topic modeling, refining results with an LLM, and constructing a graph-based representation of topic similarities.  
 
-This package processes PDF files by:
+### **Key Features**  
 
-- Extracting text using a PDF library.
-- Splitting the text into manageable chunks.
-- Performing topic modeling with two alternative implementations:
-  - A scikit-learn based approach using classic LDA.
-  - A ktrain-powered approach with configurable vocabulary filtering.
-- Refining topics using an LLM to clean and classify the extracted topics.
-- Building graphs to show relationships between text chunks based on topic similarity, leveraging network analysis.
+✅ **PDF Processing** – Extracts text from PDFs efficiently.  
+✅ **Text Segmentation** – Splits extracted text into manageable chunks.  
+✅ **Topic Modeling** – Supports two methods:  
+  - **Scikit-learn**: Classic **Latent Dirichlet Allocation (LDA)** for topic extraction.  
+  - **ktrain**: A deep-learning-based approach with vocabulary filtering.  
+✅ **LLM-Powered Refinement** – Uses a language model to clean and classify topics.  
+✅ **Graph Construction** – Builds topic similarity graphs using **network analysis**.  
 
-Key libraries used include:
+### **Core Dependencies**  
 
-- PyMuPDF for PDF processing.
-- scikit-learn and ktrain for topic modeling.
-- An LLM client for natural language processing.
-- networkx for graph construction and analysis.
+- **PyMuPDF** – Extracts text from PDF files.  
+- **scikit-learn & ktrain** – Performs topic modeling.  
+- **LLM Client** – Enhances and refines extracted topics.  
+- **networkx** – Constructs and analyzes graphs.  
 
-## Installation
+---
 
-Build the package using the recommended tool:
+## **Installation**  
+
+Ensure you have Python installed, then build and install the package locally:  
 
 ```bash
 python -m build
-```
-
-Then install locally:
-
-```bash
 pip install .
 ```
 
-## Usage
+---
 
-### Command-Line Interface
+## **Usage**  
 
-You can run the pipeline to process PDFs and extract topic information:
-
-```bash
-python -m graphrag_tagger.tagger --pdf_folder /path/to/pdfs --output_folder /path/to/output --chunk_size 512 --chunk_overlap 25 --n_features 512 --min_df 2 --max_df 0.95 --llm_model ollama:phi4 --model_choice sk
-```
-
-And build a graph from the output:
+### **Extract Topics from PDFs**  
+Run the topic extraction pipeline on a folder of PDFs:  
 
 ```bash
-python -m graphrag_tagger.build_graph --input_folder /path/to/output --output_folder /path/to/graph --threshold_percentile 97.5
+python -m graphrag_tagger.tagger \
+    --pdf_folder /path/to/pdfs \
+    --output_folder /path/to/output \
+    --chunk_size 512 \
+    --chunk_overlap 25 \
+    --n_features 512 \
+    --min_df 2 \
+    --max_df 0.95 \
+    --llm_model ollama:phi4 \
+    --model_choice sk
 ```
 
-## How It Works
+### **Build a Topic Similarity Graph**  
+Generate a graph from the extracted topics:  
 
-1. PDF files are read and their text is extracted.
-2. Text is segmented into chunks based on specified sizes.
-3. Topic modeling algorithms analyze these chunks to generate candidate topics.
-4. A language model cleans and refines these topics.
-5. A graph is constructed where nodes represent text chunks and edges represent shared topic contributions, allowing you to visualize clusters and connections.
+```bash
+python -m graphrag_tagger.build_graph \
+    --input_folder /path/to/output \
+    --output_folder /path/to/graph \
+    --threshold_percentile 97.5
+```
+
+---
+
+## **How It Works**  
+
+1️⃣ **PDF Processing** – Extracts raw text from documents.  
+2️⃣ **Text Segmentation** – Divides the text into structured chunks.  
+3️⃣ **Topic Modeling** – Uses either LDA or ktrain-based modeling to extract key topics.  
+4️⃣ **LLM-Based Refinement** – Cleans and classifies topics for better accuracy.  
+5️⃣ **Graph Construction** – Builds a network where:  
+   - **Nodes** represent text chunks.  
+   - **Edges** represent topic similarities.  
+   - The graph reveals **clusters** and **connections** between document sections.  
+
+---
+
+## **Contributing**  
+
+Contributions are welcome! Feel free to submit issues or pull requests.  
