@@ -14,22 +14,24 @@ sys.path.insert(0, os.path.abspath('../'))  # Adjust the path if needed
 project = 'graphrag_tagger'
 copyright = '2025, Alex Kameni'
 author = 'Alex Kameni'
-release = '0.1.0'
+release = '0.1.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    'sphinx.ext.duration',
+    'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',  # If using Google-style or NumPy docstrings
-    'sphinx.ext.viewcode',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx',
 ]
 
-# html_theme_options = {
-#     "rightsidebar": "true",
-#     "relbarbgcolor": "black"
-# }
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'sphinx': ('https://www.sphinx-doc.org/en/master/', None),
+}
+intersphinx_disabled_domains = ['std']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -39,5 +41,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'scrolls'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+# -- Options for EPUB output
+epub_show_urls = 'footnote'

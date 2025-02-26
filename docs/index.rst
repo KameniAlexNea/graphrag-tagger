@@ -6,10 +6,11 @@
 graphrag-tagger Documentation
 =============================
 
-Welcome to the documentation for graphrag-tagger. This documentation includes API details for all modules.
+Welcome to the documentation for graphrag-tagger. 
+A lightweight toolkit for extracting topics from PDFs and visualizing their connections using graphs.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
 Modules Documentation
