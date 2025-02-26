@@ -83,9 +83,15 @@ def main(params: dict):
     topic_extractor.fit(texts_for_fitting)
     topics = topic_extractor.get_topics()
 
+    print("Topics extracted:")
+    print("\n".join(topics))
+
     # Clean topics using LLM with configurable model
     llm = LLM(model=params["llm_model"])
     cleaned_topics = llm.clean_topics(topics)
+
+    print("Topics cleaned:")
+    print("\n".join(cleaned_topics))
 
     # Ensure output folder exists
     os.makedirs(params["output_folder"], exist_ok=True)
