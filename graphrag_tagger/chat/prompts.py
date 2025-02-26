@@ -21,6 +21,21 @@ Example of expected output format:
 
 Remember to focus on clarity and conciseness in your topic labels. Each label should effectively capture the main idea of the original messy topic."""
 
+EXAMPLE1 = """
+{
+  "content_type": "paragraph",
+  "is_sufficient": true,
+  "topics": ["Topic1", "Topic2"]
+}
+"""
+
+EXAMPLE2 = """
+{
+  "content_type": "footer",
+  "is_sufficient": false,
+  "topics": []
+}
+"""
 
 CLASSIFY_PROMPT = """
 You are an expert content classifier. Your task is to analyze a given text excerpt and perform the following:
@@ -64,18 +79,10 @@ Output your answer as a JSON object with the following keys:
 
 #### Example Outputs:
 ```json
-{
-  "content_type": "paragraph",
-  "is_sufficient": true,
-  "topics": ["Topic1", "Topic2"]
-}
+{example1}
 ```
 ```json
-{
-  "content_type": "footer",
-  "is_sufficient": false,
-  "topics": []
-}
+{example2}
 ```
 
 ### Reminders:

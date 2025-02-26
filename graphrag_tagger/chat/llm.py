@@ -1,7 +1,7 @@
 import aisuite as ai
 
 from .parser import parse_json
-from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS
+from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS, EXAMPLE1, EXAMPLE2
 
 
 class LLM:
@@ -12,6 +12,7 @@ class LLM:
     def __init__(self, model="ollama:phi4"):
         self.model = ai.Client()
         self.model_name = model
+        self.example_messages = [""""""]
 
     def __call__(self, messages: list):
         """
@@ -55,7 +56,11 @@ class LLM:
         :return: Parsed JSON object containing the selected topics.
         :rtype: list
         """
-        topics_str = "\n".join(topics)
-        prompt = CLASSIFY_PROMPT.format(text=document_chunk, topics=topics_str)
+        topics_str = "\n".join(
+            ["Topic " + str(i + 1) + ": " + topic for i, topic in enumerate(topics)]
+        )
+        prompt = CLASSIFY_PROMPT.format(
+            text=document_chunk, topics=topics_str, example1=EXAMPLE1, example2=EXAMPLE2
+        )
         results = self.__call__([{"role": "system", "content": prompt}])
         return parse_json(results)
