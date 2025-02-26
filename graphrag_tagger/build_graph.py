@@ -8,12 +8,21 @@ import pandas as pd
 from tqdm import tqdm  # Added tqdm import for progress indication
 
 
-def load_raw_files(input_folder: str, pattern: str = "*.json"):
+def load_raw_files(input_folder: str, pattern: str = "*.json", content_type_filter=""):
     files = sorted(glob(os.path.join(input_folder, pattern)))
     print(f"Found {len(files)} files in {input_folder}.")
     raws = []
+    if content_type_filter:
+        print(f"Filtering by content type: {content_type_filter}")
     for f in tqdm(files, desc="Loading raw files"):
-        raws.append(json.load(open(f)))
+        raw = json.load(open(f))
+        raw["all_raw"] = raw["classification"]
+        if content_type_filter:
+            content_type = raw["classification"].get("content_type", None)
+            if content_type not in content_type_filter:
+                continue
+        raw["classification"] = raw["classification"].get("topics", [])
+        raws.append(raw)
     print(f"Loaded {len(raws)} raw documents.")
     return raws
 
@@ -57,8 +66,8 @@ def build_graph(raws: list[dict], scores_map: dict[str, float]):
         for j in range(i + 1, len(chunks)):
             common_details = []
             total_weight = 0.0
-            classifications_i: list = chunks[i]["classification"]
-            classifications_j: list = chunks[j]["classification"]
+            classifications_i: list = list(chunks[i]["classification"])
+            classifications_j: list = list(chunks[j]["classification"])
             topics = set(classifications_i).intersection(classifications_j)
             for topic in topics:
                 rank_i = classifications_i.index(topic)
@@ -127,14 +136,17 @@ def update_graph_components(G: nx.Graph):
 
 
 def process_graph(
-    input_folder: str, output_folder: str, threshold_percentile: float = 97.5
+    input_folder: str,
+    output_folder: str,
+    threshold_percentile: float = 97.5,
+    content_type_filter="",
 ):
     print("Processing graph...")
-    pattern = "*.json"
+    pattern = "chunk_*.json"
     if threshold_percentile < 1:
         threshold_percentile *= 100
     os.makedirs(output_folder, exist_ok=True)
-    raws = load_raw_files(input_folder, pattern)
+    raws = load_raw_files(input_folder, pattern, content_type_filter)
     scores_map = compute_scores(raws)
     G = build_graph(raws, scores_map)
     G_pruned = prune_graph(G, threshold_percentile)
@@ -169,10 +181,17 @@ if __name__ == "__main__":
         default=97.5,
         help="Percentile threshold for pruning edges.",
     )
+    parser.add_argument(
+        "--content_type_filter",
+        type=str,
+        default="",
+        help="Percentile threshold for pruning edges.",
+    )
     args = parser.parse_args()
 
     process_graph(
         args.input_folder,
         args.output_folder,
         threshold_percentile=args.threshold_percentile,
+        content_type_filter=args.content_type_filter,
     )

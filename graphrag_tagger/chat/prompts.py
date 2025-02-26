@@ -25,7 +25,7 @@ EXAMPLE1 = """
 {
   "content_type": "paragraph",
   "is_sufficient": true,
-  "topics": ["Topic1", "Topic2"]
+  "topics": ["Topic 1", "Topic 2"]
 }
 """
 
@@ -43,6 +43,7 @@ You are an expert content classifier. Your task is to analyze a given text excer
 1. **Determine the type of the content.**
 2. **Assess if the content is sufficient for topic classification.**
 3. **If sufficient, select up to 3 topics from the provided list that best describe the content.**
+4. **Only the topic id is required in the output**
 
 Here is the text excerpt you need to analyze:
 ```
