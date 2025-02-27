@@ -172,3 +172,5 @@ cython_debug/
 
 data
 .vscode
+
+notebook/example/results

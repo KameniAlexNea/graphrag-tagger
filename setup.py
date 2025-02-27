@@ -16,7 +16,7 @@ def read_long_description():
 
 setup(
     name=metadata.get("PACKAGE_NAME", "graphrag_tagger"),
-    version=metadata.get("VERSION", "0.1.0"),
+    version=metadata.get("VERSION", "0.1.1"),  # updated version
     description=metadata.get("DESCRIPTION", ""),
     long_description=read_long_description(),
     long_description_content_type="text/markdown",
@@ -25,7 +25,7 @@ setup(
     url=metadata.get("URL", ""),
     packages=find_packages(),
     install_requires=read_requirements(),
-    python_requires=">=3.6",
+    python_requires=">=3.10",  # require Python 3.10+
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",

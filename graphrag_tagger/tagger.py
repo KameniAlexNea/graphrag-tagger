@@ -83,9 +83,25 @@ def main(params: dict):
     topic_extractor.fit(texts_for_fitting)
     topics = topic_extractor.get_topics()
 
+    print("Topics extracted:")
+    print("\n".join(topics))
+
     # Clean topics using LLM with configurable model
     llm = LLM(model=params["llm_model"])
     cleaned_topics = llm.clean_topics(topics)
+
+    print("Saving topics at:", params["output_folder"] + "/topics.json")
+
+    with open(os.path.join(params["output_folder"], "topics.json"), "w") as f:
+        json.dump(
+            {"topics": cleaned_topics, "lad_topic": topics},
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    print("Topics cleaned:")
+    print("\n".join(cleaned_topics))
 
     # Ensure output folder exists
     os.makedirs(params["output_folder"], exist_ok=True)
