@@ -60,7 +60,7 @@ Here are the candidate topics to choose from:
 ```
 
 ### Instructions:
-1. **Determine the content type** from the following list: 
+1. **Determine the content type** from the following list:
    - paragraph
    - table
    - list
