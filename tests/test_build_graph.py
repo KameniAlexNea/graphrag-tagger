@@ -2,6 +2,7 @@ import json
 import os
 
 import networkx as nx
+import pytest
 
 from graphrag_tagger.build_graph import (
     build_graph,
@@ -13,13 +14,38 @@ from graphrag_tagger.build_graph import (
 )
 
 
+@pytest.fixture()
+def data1():
+    return {
+        "chunk": "doc1",
+        "source_file": "f1",
+        "classification": {"topics": ["a", "b"]},
+    }
+
+
+@pytest.fixture()
+def data2():
+    return {
+        "chunk": "doc2",
+        "source_file": "f2",
+        "classification": {"topics": ["b", "c"]},
+    }
+
+
+@pytest.fixture()
+def data3():
+    return {
+        "chunk": "doc3",
+        "source_file": "f3",
+        "classification": {"topics": ["a", "c"]},
+    }
+
+
 # Test load_raw_files using tmp_path fixture
-def test_load_raw_files(tmp_path):
+def test_load_raw_files(tmp_path, data1, data2):
     # Create dummy JSON files
-    data1 = {"chunk": "doc1", "source_file": "f1", "classification": ["a", "b"]}
-    data2 = {"chunk": "doc2", "source_file": "f2", "classification": ["b", "c"]}
-    file1 = tmp_path / "file1.json"
-    file2 = tmp_path / "file2.json"
+    file1 = tmp_path / "chunk_1.json"
+    file2 = tmp_path / "chunk_2.json"
     file1.write_text(json.dumps(data1))
     file2.write_text(json.dumps(data2))
 
@@ -30,7 +56,7 @@ def test_load_raw_files(tmp_path):
     assert raws[1]["classification"] == ["b", "c"]
 
 
-def test_compute_scores():
+def test_compute_scores(data1, data2):
     raws = [
         {"chunk": "doc1", "source_file": "f1", "classification": ["a", "b"]},
         {"chunk": "doc2", "source_file": "f2", "classification": ["a", "c"]},
@@ -76,18 +102,16 @@ def test_prune_and_update_components():
     assert component_map[2] != component_map[0]
 
 
-def test_process_graph(tmp_path):
+def test_process_graph(tmp_path, data1, data2, data3):
     # Create temporary directories for input and output
     input_dir = tmp_path / "input"
     output_dir = tmp_path / "output"
     input_dir.mkdir()
     output_dir.mkdir()
 
-    # Create dummy JSON files
-    data1 = {"chunk": "doc1", "source_file": "f1", "classification": ["a", "b"]}
-    data2 = {"chunk": "doc2", "source_file": "f2", "classification": ["a", "c"]}
-    (input_dir / "doc1.json").write_text(json.dumps(data1))
-    (input_dir / "doc2.json").write_text(json.dumps(data2))
+    (input_dir / "chunk_1.json").write_text(json.dumps(data1))
+    (input_dir / "chunk_2.json").write_text(json.dumps(data2))
+    (input_dir / "chunk_3.json").write_text(json.dumps(data3))
 
     # Run process_graph
     G_pruned = process_graph(str(input_dir), str(output_dir), threshold_percentile=97.5)
