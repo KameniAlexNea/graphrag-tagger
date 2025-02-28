@@ -7,7 +7,7 @@ import tiktoken
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 
-from .chat.llm import LLM
+from .chat.llm import LLMService, LLM
 from .lda.kt_modelling import KtrainTopicExtractor
 from .lda.sk_modelling import SklearnTopicExtractor
 
@@ -86,8 +86,10 @@ def main(params: dict):
     print("Topics extracted:")
     print("\n".join(topics))
 
-    # Clean topics using LLM with configurable model
-    llm = LLM(model=params["llm_model"])
+    # Configure model using LLMService
+    llm_service = LLMService(model=params["llm_model"])
+    # Clean topics using LLM
+    llm = LLM(llm_service)
     cleaned_topics = llm.clean_topics(topics)
 
     print("Saving topics at:", params["output_folder"] + "/topics.json")
@@ -114,7 +116,7 @@ def main(params: dict):
             "source_file": entry["source_file"],
             "classification": classification,
         }
-        output_path = os.path.join(params["output_folder"], f"chunk_{i+1}.json")
+        output_path = os.path.join(params["output_folder"], f"chunk_{i + 1}.json")
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
     print(f"Saved {len(all_chunks)} chunk files to {params['output_folder']}")

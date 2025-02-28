@@ -4,9 +4,9 @@ from .parser import parse_json
 from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS, EXAMPLE1, EXAMPLE2
 
 
-class LLM:
+class LLMService:
     """
-    A wrapper for the LLM model to clean topics and classify document chunks.
+    Handles communication with the LLM model.
     """
 
     def __init__(self, model="ollama:phi4"):
@@ -31,6 +31,15 @@ class LLM:
             .message.content
         )
 
+
+class LLM:
+    """
+    A wrapper for the LLM model to clean topics and classify document chunks.
+    """
+
+    def __init__(self, llm_service: LLMService):
+        self.llm_service = llm_service
+
     def clean_topics(self, topics: list):
         """
         Clean a list of messy topics by transforming them into concise, clear topic labels.
@@ -42,7 +51,7 @@ class LLM:
         """
         topics_str = "\n".join(topics)
         prompt = CREATE_TOPICS.format(topics=topics_str)
-        results = self.__call__([{"role": "system", "content": prompt}])
+        results = self.llm_service([{"role": "system", "content": prompt}])
         return parse_json(results)
 
     def classify(self, document_chunk: str, topics: list):
@@ -62,5 +71,5 @@ class LLM:
         prompt = CLASSIFY_PROMPT.format(
             text=document_chunk, topics=topics_str, example1=EXAMPLE1, example2=EXAMPLE2
         )
-        results = self.__call__([{"role": "system", "content": prompt}])
+        results = self.llm_service([{"role": "system", "content": prompt}])
         return parse_json(results)
