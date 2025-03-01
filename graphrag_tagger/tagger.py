@@ -7,7 +7,7 @@ import tiktoken
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 
-from .chat.llm import LLMService, LLM
+from .chat.llm import LLM, LLMService
 from .lda.kt_modelling import KtrainTopicExtractor
 from .lda.sk_modelling import SklearnTopicExtractor
 
