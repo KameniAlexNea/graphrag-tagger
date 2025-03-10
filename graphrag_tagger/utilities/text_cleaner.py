@@ -5,7 +5,7 @@ import tiktoken
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-class Processor:
+class TextCleaner:
     def __init__(self, chunk_size=512, chunk_overlap=75):
         encoding = tiktoken.get_encoding("cl100k_base")
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -13,6 +13,12 @@ class Processor:
             chunk_overlap=chunk_overlap,
             length_function=lambda x: len(encoding.encode(x)),
         )
+
+    def split_text(self, text):
+        texts = self.text_splitter.split_text(text)
+        print(texts)
+        texts = [self.merge_sentences(i) for i in texts if self.is_valid_file(i)]
+        return texts
 
     @staticmethod
     def merge_sentences(text: str) -> str:
@@ -68,7 +74,7 @@ class Processor:
         return "\n".join(merged).strip()
 
     @staticmethod
-    def is_potential_title(line: str) -> bool:
+    def _is_potential_title(line: str) -> bool:
         line = line.strip()  # Remove leading and trailing whitespace
 
         # Check if the line starts with a number followed by a period (e.g., "19.")
@@ -95,10 +101,10 @@ class Processor:
         count = [i for i in lines if "........" in i]  # potential title
         count2 = [i for i in lines if "—." in i]  # potential citation
         count3 = [
-            1 for i in lines if Processor.is_potential_title(i)
+            1 for i in lines if TextCleaner._is_potential_title(i)
         ]  # potential citation part
         return (
-            (50 > len(lines) > 10)
+            (len(lines) > 3)
             and len(count) < 5
             and len(count2) < 5
             and len(count3) < 5
