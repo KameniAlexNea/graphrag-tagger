@@ -31,7 +31,7 @@ def parse_json(json_str: str):
             return json.loads(json_block)
         except json.JSONDecodeError as e:
             print("Error parsing JSON block:", e)
-            return None
+            return
 
     # Attempt 3: Fallback to extracting text between the first '{' and the last '}'.
     start = json_str.find("{")
@@ -42,7 +42,7 @@ def parse_json(json_str: str):
             return json.loads(json_block)
         except json.JSONDecodeError as e:
             print("Error parsing fallback JSON block:", e)
-            return None
+            return
 
     # Attempt 3: Fallback to extracting text between the first '{' and the last '}'.
     start = json_str.find("[")
@@ -53,10 +53,10 @@ def parse_json(json_str: str):
             return json.loads(json_block)
         except json.JSONDecodeError as e:
             print("Error parsing fallback JSON block:", e)
-            return None
+            return
 
     # If no JSON could be parsed, return None.
-    return None
+    return
 
 
 # --- Example Usage ---

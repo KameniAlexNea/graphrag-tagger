@@ -4,14 +4,8 @@ import os
 import networkx as nx
 import pytest
 
-from graphrag_tagger.build_graph import (
-    build_graph,
-    compute_scores,
-    load_raw_files,
-    process_graph,
-    prune_graph,
-    update_graph_components,
-)
+from graphrag_tagger.build_graph import process_graph
+from graphrag_tagger.graph.graph_manager import GraphManager
 
 
 @pytest.fixture()
@@ -49,7 +43,8 @@ def test_load_raw_files(tmp_path, data1, data2):
     file1.write_text(json.dumps(data1))
     file2.write_text(json.dumps(data2))
 
-    raws = load_raw_files(str(tmp_path))
+    graph_manager = GraphManager()
+    raws = graph_manager.load_raw_files(str(tmp_path))
     assert len(raws) == 2
     # Basic checks on loaded data
     assert raws[0]["chunk"] == "doc1"
@@ -61,7 +56,8 @@ def test_compute_scores(data1, data2):
         {"chunk": "doc1", "source_file": "f1", "classification": ["a", "b"]},
         {"chunk": "doc2", "source_file": "f2", "classification": ["a", "c"]},
     ]
-    scores_map = compute_scores(raws)
+    graph_manager = GraphManager()
+    scores_map = graph_manager.compute_scores(raws)
     # Check that required keys exist
     for topic in ["a", "b", "c"]:
         assert topic in scores_map
@@ -75,7 +71,8 @@ def test_build_graph():
         {"chunk": "doc2", "source_file": "f2", "classification": ["a", "c"]},
     ]
     scores_map = {"a": 1.0, "b": 1.0, "c": 1.0}
-    G = build_graph(raws, scores_map)
+    graph_manager = GraphManager()
+    G = graph_manager.build_graph(raws, scores_map)
     # Expect 2 nodes and an edge because of common "a"
     assert G.number_of_nodes() == 2
     assert G.has_edge(0, 1)
@@ -90,10 +87,13 @@ def test_prune_and_update_components():
     G.add_edge(0, 1, weight=3)
     G.add_edge(1, 2, weight=1)  # lower weight edge to be pruned
     # Prune using a threshold that only retains weight >= 2
-    G_pruned = prune_graph(G, 50)  # 50th percentile, edge weight 3 remains
+    graph_manager = GraphManager()
+    G_pruned = graph_manager.prune_graph(
+        G, 50
+    )  # 50th percentile, edge weight 3 remains
     # After pruning, only edge (0,1) should remain.
     assert G_pruned.number_of_edges() == 1
-    component_map = update_graph_components(G_pruned)
+    component_map = graph_manager.update_graph_components(G_pruned)
     # Check that nodes in the main connected component have proper component IDs.
     assert 0 in component_map and 1 in component_map
     # Node 2 is isolated: update_graph_components does not remove nodes so it should be in its own comp

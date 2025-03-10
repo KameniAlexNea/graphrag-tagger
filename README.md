@@ -8,7 +8,9 @@
 
 ### **Key Features**
 
-✅ **PDF Processing** – Extracts text from PDFs efficiently.✅ **Text Segmentation** – Splits extracted text into manageable chunks.✅ **Topic Modeling** – Supports two methods:
+✅ **PDF Processing** – Extracts text from PDFs efficiently.
+✅ **Text Segmentation** – Splits extracted text into manageable chunks.
+✅ **Topic Modeling** – Supports two methods:
 
 - **Scikit-learn**: Classic **Latent Dirichlet Allocation (LDA)** for topic extraction.
 - **ktrain**: A deep-learning-based approach with vocabulary filtering.
@@ -68,7 +70,11 @@ python -m graphrag_tagger.build_graph \
 
 ## **How It Works**
 
-1️⃣ **PDF Processing** – Extracts raw text from documents.2️⃣ **Text Segmentation** – Divides the text into structured chunks.3️⃣ **Topic Modeling** – Uses either LDA or ktrain-based modeling to extract key topics.4️⃣ **LLM-Based Refinement** – Cleans and classifies topics for better accuracy.5️⃣ **Graph Construction** – Builds a network where:
+1️⃣ **PDF Processing** – Extracts raw text from documents.
+2️⃣ **Text Segmentation** – Divides the text into structured chunks.
+3️⃣ **Topic Modeling** – Uses either LDA or ktrain-based modeling to extract key topics.
+4️⃣ **LLM-Based Refinement** – Cleans and classifies topics for better accuracy.
+5️⃣ **Graph Construction** – Builds a network where:
 
 - **Nodes** represent text chunks.
 - **Edges** represent topic similarities.

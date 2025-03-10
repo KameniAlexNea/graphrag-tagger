@@ -1,4 +1,4 @@
-from graphrag_tagger.chat.parser import parse_json
+from graphrag_tagger.utilities.parser import parse_json
 
 
 def test_parse_valid_json():
