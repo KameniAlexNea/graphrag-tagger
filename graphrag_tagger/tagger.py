@@ -96,7 +96,7 @@ def main(params: dict):
 
     with open(os.path.join(params["output_folder"], "topics.json"), "w") as f:
         json.dump(
-            {"topics": cleaned_topics, "lad_topic": topics},
+            {"topics": cleaned_topics, "lda_topic": topics},
             f,
             ensure_ascii=False,
             indent=2,
