@@ -59,18 +59,28 @@ Here are the candidate topics to choose from:
 </topics>
 ```
 
-### Instructions:
+### Task Requirements:
 1. **Determine the content type** from the following list:
-   - paragraph
-   - table
-   - list
-   - header
-   - footer
-   - index
-   - figure_caption
-   - other
-2. **Assess sufficiency**: Evaluate if the text excerpt contains sufficient information to reliably determine its main themes or subject matter. If it does, set `"is_sufficient"` to `true`; otherwise, set it to `false`.
-3. **Select topics**: If `"is_sufficient"` is `true`, select up to 3 topics from the provided list that best describe the content. If fewer than 3 topics are relevant, select fewer. If `"is_sufficient"` is `false`, do not select any topics.
+  * `paragraph`: A continuous block of prose.
+  * `table`: Text formatted with rows/columns (e.g., "Product | Price").
+  * `list`: Items separated by numbers, bullets, or dashes (e.g., "- Item 1").
+  * `header/footer/index`: Titles/footers/navigation markers.
+  * `figure_caption`: Descriptions of images/diagrams.
+  * `citation`: section with reference or citation of author, book.
+  * `other`: None of the above.
+
+2. **Assess sufficiency**: **Strict** evaluation if the text excerpt contains sufficient information to reliably determine its main themes or subject matter. 
+- Set `"is_sufficient"` to:
+     * `true` only if the text contains enough distinct information to confidently identify its core themes.
+     * `false` for vague, incomplete, or ambiguous content (e.g., "See Section 4" or isolated keywords).
+
+3. **Select Topics** (only if sufficient):
+   - Choose **up to three most relevant topics** from the provided list. 
+   - Prioritize specificity: e.g., prefer "Climate Change Causes" over "Environment".
+   - Do NOT include topics that are:
+     * Too broad/unrelated
+     * Duplicates of other selected items
+     * Not explicitly listed in `<topics>`
 
 ### Output Format:
 Output your answer as a JSON object with the following keys:
@@ -90,6 +100,7 @@ Output your answer as a JSON object with the following keys:
 - Select no more than 3 topics.
 - Use only topics from the provided list.
 - Ensure the selected topics are the most relevant to the text content if `"is_sufficient"` is `true`.
+- For ambiguous headers like "Chapter 3: Results", classify as `header` and mark insufficient.
 
-Present your answer as a JSON object. Do not include any extra text or explanations outside of the JSON object.
+**Final Warning:** Strictly adhere to JSON syntax. Do not include any extra text or explanations outside of the JSON object.
 """.strip()

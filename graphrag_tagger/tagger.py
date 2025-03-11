@@ -3,13 +3,12 @@ import json
 import os
 
 import fitz
-import tiktoken
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 
 from .chat.llm import LLM, LLMService
 from .lda.kt_modelling import KtrainTopicExtractor
 from .lda.sk_modelling import SklearnTopicExtractor
+from .utilities.text_cleaner import TextCleaner
 
 
 def load_pdf_texts(folder_path: str):
@@ -28,7 +27,7 @@ def load_pdf_texts(folder_path: str):
             doc = fitz.open(file_path)
             pdf_text = ""
             for page in doc:
-                pdf_text += page.get_text() + "\n"
+                pdf_text += page.get_text() + "\n\n"
             texts[file_path] = pdf_text
     return texts
 
@@ -42,21 +41,14 @@ def main(params: dict):
     """
     # Load PDFs from folder
     pdf_texts = load_pdf_texts(params["pdf_folder"])
+    cleaner = TextCleaner(params["chunk_size"], params["chunk_overlap"])
 
     # Split texts into chunks along with source file metadata
     all_chunks = []  # each element is dict: {"chunk": str, "source_file": str}
 
-    encoding = tiktoken.get_encoding("cl100k_base")
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=params["chunk_size"],
-        chunk_overlap=params["chunk_overlap"],
-        length_function=lambda x: len(encoding.encode(x)),
-    )
-
     # Split texts into chunks along with source file metadata
     for file_path, text in pdf_texts.items():
-        chunks = splitter.split_text(text)
-        for chunk in chunks:
+        for chunk in cleaner.split_text(text):
             all_chunks.append({"chunk": chunk, "source_file": file_path})
 
     if not all_chunks:
@@ -96,7 +88,7 @@ def main(params: dict):
 
     with open(os.path.join(params["output_folder"], "topics.json"), "w") as f:
         json.dump(
-            {"topics": cleaned_topics, "lad_topic": topics},
+            {"topics": cleaned_topics, "lda_topic": topics},
             f,
             ensure_ascii=False,
             indent=2,

@@ -8,7 +8,24 @@ from graphrag_tagger.tagger import main
 # Dummy PDF classes to simulate fitz behavior.
 class DummyPage:
     def get_text(self):
-        return "Dummy page text."
+        return """
+focused summarization (QFS) task, rather than an explicit retrieval task. Prior
+QFS methods, meanwhile, do not scale to the quantities of text indexed by typ-
+ical RAG systems. To combine the strengths of these contrasting methods, we
+propose GraphRAG, a graph-based approach to question answering over private
+text corpora that scales with both the generality of user questions and the quantity
+of source text. Our approach uses an LLM to build a graph index in two stages:
+first, to derive an entity knowledge graph from the source documents, then to pre-
+generate community summaries for all groups of closely related entities. Given a
+question, each community summary is used to generate a partial response, before
+all partial responses are again summarized in a final response to the user. For a
+class of global sensemaking questions over datasets in the 1 million token range,
+we show that GraphRAG leads to substantial improvements over a conventional
+RAG baseline for both the comprehensiveness and diversity of generated answers.
+1
+Introduction
+Retrieval augmented generation (RAG) (Lewis et al., 2020) is an established approach to using
+"""
 
 
 class DummyDoc:
@@ -82,7 +99,26 @@ def test_main_pipeline(tmp_path):
     pdf_dir = tmp_path / "pdfs"
     pdf_dir.mkdir()
     pdf_file = pdf_dir / "dummy.pdf"
-    pdf_file.write_text("Dummy PDF content.")
+    pdf_file.write_text(
+        """
+focused summarization (QFS) task, rather than an explicit retrieval task. Prior
+QFS methods, meanwhile, do not scale to the quantities of text indexed by typ-
+ical RAG systems. To combine the strengths of these contrasting methods, we
+propose GraphRAG, a graph-based approach to question answering over private
+text corpora that scales with both the generality of user questions and the quantity
+of source text. Our approach uses an LLM to build a graph index in two stages:
+first, to derive an entity knowledge graph from the source documents, then to pre-
+generate community summaries for all groups of closely related entities. Given a
+question, each community summary is used to generate a partial response, before
+all partial responses are again summarized in a final response to the user. For a
+class of global sensemaking questions over datasets in the 1 million token range,
+we show that GraphRAG leads to substantial improvements over a conventional
+RAG baseline for both the comprehensiveness and diversity of generated answers.
+1
+Introduction
+Retrieval augmented generation (RAG) (Lewis et al., 2020) is an established approach to using
+"""
+    )
     # Create an output folder.
     output_dir = tmp_path / "output"
     output_dir.mkdir()

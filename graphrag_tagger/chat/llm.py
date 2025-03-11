@@ -1,6 +1,6 @@
 import aisuite as ai
 
-from .parser import parse_json
+from ..utilities.parser import parse_json
 from .prompts import CLASSIFY_PROMPT, CREATE_TOPICS, EXAMPLE1, EXAMPLE2
 
 
