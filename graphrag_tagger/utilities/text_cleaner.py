@@ -104,10 +104,7 @@ class TextCleaner:
             1 for i in lines if TextCleaner._is_potential_title(i)
         ]  # potential citation part
         return (
-            (len(lines) > 3)
-            and len(count) < 5
-            and len(count2) < 5
-            and len(count3) < 5
+            (len(lines) > 3) and len(count) < 5 and len(count2) < 5 and len(count3) < 5
         )
 
     @staticmethod

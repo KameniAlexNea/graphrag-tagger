@@ -99,7 +99,8 @@ def test_main_pipeline(tmp_path):
     pdf_dir = tmp_path / "pdfs"
     pdf_dir.mkdir()
     pdf_file = pdf_dir / "dummy.pdf"
-    pdf_file.write_text("""
+    pdf_file.write_text(
+        """
 focused summarization (QFS) task, rather than an explicit retrieval task. Prior
 QFS methods, meanwhile, do not scale to the quantities of text indexed by typ-
 ical RAG systems. To combine the strengths of these contrasting methods, we
@@ -116,7 +117,8 @@ RAG baseline for both the comprehensiveness and diversity of generated answers.
 1
 Introduction
 Retrieval augmented generation (RAG) (Lewis et al., 2020) is an established approach to using
-""")
+"""
+    )
     # Create an output folder.
     output_dir = tmp_path / "output"
     output_dir.mkdir()

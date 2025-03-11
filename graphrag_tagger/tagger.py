@@ -3,8 +3,6 @@ import json
 import os
 
 import fitz
-import tiktoken
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tqdm import tqdm
 
 from .chat.llm import LLM, LLMService
