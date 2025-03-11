@@ -4,3 +4,6 @@ sphinx
 wheel
 twine
 build
+jupyter
+ipywidgets
+pickleshare
